@@ -1,9 +1,6 @@
 import cv2 as cv
 import numpy as np
 import math
-import matplotlib.pyplot as plt
-from matplotlib import cm
-from PIL import Image as im
 
 #reads in the image
 def readImg(img_file_name):
@@ -41,8 +38,6 @@ def gaussian(img, sigma):
     # applies wrap around padding to the original image
     pad_size = math.floor(kernel_size / 2)
     paddedImg = np.lib.pad(current_img, pad_size, 'symmetric')
-    # print("&&&paddedImg&&&")
-    # displayImg(paddedImg, "gaussian image")
     gaussianImg = np.zeros([rows, columns], dtype = float)
     k_rows = kernel.shape[0]
     k_cols = kernel.shape[1]
@@ -66,29 +61,13 @@ def nonMax():
 
 # Displays the output images and corresponding messages
 def displayImg(img, img_title):
-    print("=====display image=====")
-    # using PIL
-    # current_img = im.fromarray((img * 255).astype(np.uint8))
-    # print("=====save image=====")
-    # current_img.save("test_img.png")
-    # print(current_img)
-
-    # Reverse normalization before saving the file
+    # Reverses normalization before saving the image
     img_rev_norm = cv.convertScaleAbs(img, alpha=(255.0))
     cv.imwrite('test_img.png', img_rev_norm)
 
-    # Showing image requires normalization
+    # Displays the normalized image
     cv.imshow(img_title, img)
     cv.waitKey(0)
-
-    # current_img.show() #not sure how to show title in figure window
-    # current_img.close()
-
-
-    # using matplotlib
-    # img = img / 255
-    # current_img = im.fromarray(np.uint8(cm.plasma(img) * 255))
-    # current_img.show()
     
 # Save the output images to database
 def saveImg():
