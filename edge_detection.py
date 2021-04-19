@@ -48,12 +48,41 @@ def gaussian(img, sigma):
             temp_matrix = temp_matrix.astype(float)
             temp_matrix = kernel * temp_matrix
             gaussianImg[i, j] = np.sum(temp_matrix)
-    gaussianImg = normalize(gaussianImg)
+    # gaussianImg = normalize(gaussianImg)
     #displays the image
     displayImg(gaussianImg, "gaussian image")
+    return gaussianImg
+
 # Sobel Filter method
-def sobel():
-    print("Sobel")
+def sobel(gaussian_img):
+    # initializes the gradient X and Y matrices
+    gradient_x = [[1, 2, 1], [0, 0, 0], [-1, -2, -1]]
+    gradient_y = [[1, 0, -1], [2, 0, -2], [1, 0, -1]]
+    threshold = 10 #max value of pixel gradient magnitude
+    img_rows = gaussian_img.shape[0]
+    img_cols = gaussian_img.shape[1]
+    gradient_magnitude = np.zeros([img_rows, img_cols], dtype = float)
+    gradient_direction = np.zeros([img_rows, img_cols], dtype = float)
+    # calculates gradient magnitude for each pixel
+    for i in range(img_rows - 1):
+        for j in range(img_rows - 1):
+            # gets the current 3x3 matrix from the original image
+            tempImg = gaussian_img[i : i + 3, j : j + 3]
+            # calculates the x-axis and y-axis gradient magnitude
+            tempImg = tempImg.astype(float)
+            Gx = np.sum(np.multiply(gradient_x, tempImg))
+            Gy = np.sum(np.multiply(gradient_y, tempImg))
+            # applies the gradient magnitude formula to current pixel
+            gradient_magnitude[i + 1][j + 1] = math.sqrt(Gx**2 + Gy**2)
+            # calculates the gradient direction
+            gradient_direction[i + 1][j + 1] = math.degrees(math.atan(Gx, Gy)) 
+
+    # applies the threshold to the gradient magnitude matrix
+    sobelImg = max(gradient_magnitude, threshold)
+    sobelImg[sobelImg == round(threshold)] = 0
+    # displays the sobel image
+    displayImg(sobelImg, "sobel_img")
+
 
 # Non-maximum Suppression method
 def nonMax():
@@ -62,12 +91,13 @@ def nonMax():
 # Displays the output images and corresponding messages
 def displayImg(img, img_title):
     # Reverses normalization before saving the image
-    img_rev_norm = cv.convertScaleAbs(img, alpha=(255.0))
+    # img_rev_norm = cv.convertScaleAbs(img, alpha=(255.0))
     cv.imwrite('test_img.png', img_rev_norm)
 
+    cv.imwrite(img_title + '.png', img)
     # Displays the normalized image
-    cv.imshow(img_title, img)
-    cv.waitKey(0)
+    # cv.imshow(img_title, img)
+    # cv.waitKey(0)
     
 # Save the output images to database
 def saveImg():
@@ -78,7 +108,7 @@ def normalize(x):
     return (x - x.min()) / (np.ptp(x))
 
 def main():
-    gaussian('images/woman_original.jpg', 3)
+    gaussianImg = gaussian('images/woman_original.jpg', 3)
 
     # #waits for user to press "Esc" to close the displayed image window
     # cv.waitKey(0)
