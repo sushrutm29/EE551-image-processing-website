@@ -26,32 +26,26 @@ def gaussian(img, sigma):
 
     # initializes kernel size
     kernel_size = 6 * sigma + 1
-    print("kernel_size = " + str(kernel_size))
-    kernel = np.zeros([kernel_size, kernel_size], dtype = int)
+    kernel = np.zeros([kernel_size, kernel_size], dtype = float)
     # calculates center element's coordinates
     middleIndex = math.ceil(kernel_size / 2)
-    print("middleIndex = " + str(middleIndex))
     # calculates kernel matrix
     for i in range(kernel_size):
         for j in range(kernel_size):
             center_dist = pow((i + 1 - middleIndex), 2) + \
                 pow((j + 1 - middleIndex), 2)
-            print("center_dist = " + str(center_dist))
             k_row = i + 1
             k_col = j + 1
             kernel[i, j] = math.exp(-(center_dist) / (2 * sigma^2))
     kernel = (1 / (2 * math.pi * (sigma ** 2))) * kernel
     # applies wrap around padding to the original image
     pad_size = math.floor(kernel_size / 2)
-    print("pad_size = " + str(pad_size))
     paddedImg = np.lib.pad(current_img, pad_size, 'symmetric')
     # print("&&&paddedImg&&&")
     # displayImg(paddedImg, "gaussian image")
-    gaussianImg = np.zeros([rows, columns], dtype = int)
+    gaussianImg = np.zeros([rows, columns], dtype = float)
     k_rows = kernel.shape[0]
     k_cols = kernel.shape[1]
-    print("k_rows = " + str(k_rows))
-    print("k_cols = " + str(k_cols))
     # applies the Gaussian filter
     for i in range(rows):
         for j in range(columns):
@@ -59,6 +53,7 @@ def gaussian(img, sigma):
             temp_matrix = temp_matrix.astype(float)
             temp_matrix = kernel * temp_matrix
             gaussianImg[i, j] = np.sum(temp_matrix)
+    gaussianImg = normalize(gaussianImg)
     #displays the image
     displayImg(gaussianImg, "gaussian image")
 # Sobel Filter method
@@ -73,10 +68,20 @@ def nonMax():
 def displayImg(img, img_title):
     print("=====display image=====")
     # using PIL
-    current_img = im.fromarray((img * 255).astype(np.uint8))
-    print("=====save image=====")
-    current_img.save("test_img.png")
-    current_img.show() #not sure how to show title in figure window
+    # current_img = im.fromarray((img * 255).astype(np.uint8))
+    # print("=====save image=====")
+    # current_img.save("test_img.png")
+    # print(current_img)
+
+    # Reverse normalization before saving the file
+    img_rev_norm = cv.convertScaleAbs(img, alpha=(255.0))
+    cv.imwrite('test_img.png', img_rev_norm)
+
+    # Showing image requires normalization
+    cv.imshow(img_title, img)
+    cv.waitKey(0)
+
+    # current_img.show() #not sure how to show title in figure window
     # current_img.close()
 
 
@@ -88,6 +93,10 @@ def displayImg(img, img_title):
 # Save the output images to database
 def saveImg():
     print("")
+
+def normalize(x):
+    x = np.asarray(x)
+    return (x - x.min()) / (np.ptp(x))
 
 def main():
     gaussian('images/woman_original.jpg', 3)
