@@ -33,7 +33,7 @@ def gaussian(img, sigma):
                 pow((j + 1 - middleIndex), 2)
             k_row = i + 1
             k_col = j + 1
-            kernel[i, j] = math.exp(-(center_dist) / (2 * sigma^2))
+            kernel[i, j] = math.exp(-(center_dist) / (2 * (sigma**2)))
     kernel = (1 / (2 * math.pi * (sigma ** 2))) * kernel
     # applies wrap around padding to the original image
     pad_size = math.floor(kernel_size / 2)
@@ -50,7 +50,7 @@ def gaussian(img, sigma):
             gaussianImg[i, j] = np.sum(temp_matrix)
     # gaussianImg = normalize(gaussianImg)
     #displays the image
-    displayImg(gaussianImg, "gaussian image")
+    saveImg(gaussianImg, "gaussian_img")
     return gaussianImg
 
 # Sobel Filter method
@@ -64,8 +64,8 @@ def sobel(gaussian_img):
     gradient_magnitude = np.zeros([img_rows, img_cols], dtype = float)
     gradient_direction = np.zeros([img_rows, img_cols], dtype = float)
     # calculates gradient magnitude for each pixel
-    for i in range(img_rows - 1):
-        for j in range(img_rows - 1):
+    for i in range(img_rows - 2):
+        for j in range(img_cols - 2):
             # gets the current 3x3 matrix from the original image
             tempImg = gaussian_img[i : i + 3, j : j + 3]
             # calculates the x-axis and y-axis gradient magnitude
@@ -75,43 +75,78 @@ def sobel(gaussian_img):
             # applies the gradient magnitude formula to current pixel
             gradient_magnitude[i + 1][j + 1] = math.sqrt(Gx**2 + Gy**2)
             # calculates the gradient direction
-            gradient_direction[i + 1][j + 1] = math.degrees(math.atan(Gx, Gy)) 
+            gradient_direction[i + 1][j + 1] = math.degrees(math.atan(Gy / Gx)) 
 
     # applies the threshold to the gradient magnitude matrix
-    sobelImg = max(gradient_magnitude, threshold)
+    # sobelImg = max(gradient_magnitude, threshold)
+    gradient_magnitude[gradient_magnitude < threshold] = threshold
+    sobelImg = gradient_magnitude
     sobelImg[sobelImg == round(threshold)] = 0
     # displays the sobel image
-    displayImg(sobelImg, "sobel_img")
-
+    saveImg(sobelImg, "sobel_img")
+    return sobelImg, gradient_direction
 
 # Non-maximum Suppression method
-def nonMax():
-    print("non-max")
-
-# Displays the output images and corresponding messages
-def displayImg(img, img_title):
-    # Reverses normalization before saving the image
-    # img_rev_norm = cv.convertScaleAbs(img, alpha=(255.0))
-    cv.imwrite('test_img.png', img_rev_norm)
-
-    cv.imwrite(img_title + '.png', img)
-    # Displays the normalized image
-    # cv.imshow(img_title, img)
-    # cv.waitKey(0)
+def nonMax(img_mag, g_direct):
+    # initializes necessary variables
+    rows = img_mag.shape[0]
+    cols = img_mag.shape[1]
+    # initializes degree variables used for the four directions
+    h_right, h_left, v_right, v_left, half_circle = 22.5, 157.5, 67.5, 112.5, 180
+    outputImg = np.zeros([rows, cols], dtype = float)
+    pad_size = 1
+    img_mag = np.lib.pad(img_mag, pad_size, 'symmetric')
+    # assigns the edge orientation
+    for i in range(1, rows - 2 + pad_size):
+        for j in range(1, cols - 2 + pad_size):
+            # horizontal direction
+            if (g_direct[i][j] <= half_circle and g_direct[i][j] >= h_left) or \
+                (g_direct[i][j] < -h_left and g_direct[i][j] >= -half_circle) or \
+                    (g_direct[i][j] >= -h_right and g_direct[i][j] <= h_right):
+                if (img_mag[i + 1][j] <= img_mag[i][j]) and \
+                    (img_mag[i - 1][j] <= img_mag[i][j]):
+                    outputImg[i][j] = img_mag[i][j]
+                else:
+                    outputImg[i][j] = 0
+            # vertical direction
+            elif (g_direct[i][j] < -v_right and g_direct[i][j] >= -v_left) or \
+                (g_direct[i][j] <= v_left and g_direct[i][j] >= v_right):
+                if (img_mag[i][j + 1] <= img_mag[i][j]) and \
+                    (img_mag[i][j - 1] <= img_mag[i][j]):
+                    outputImg[i][j] = img_mag[i][j]
+                else:
+                    outputImg[i][j] = 0
+            # diagonal direction (-22.5 ~ -67.5 and 112.5 ~ 157.5)
+            elif (g_direct[i][j] < -h_right and g_direct[i][j] >= -v_right) or \
+                (g_direct[i][j] <= h_left and g_direct[i][j] >= v_left):
+                if (img_mag[i + 1][j - 1] <= img_mag[i][j]) and \
+                    (img_mag[i - 1][j + 1] <= img_mag[i][j]):
+                    outputImg[i][j] = img_mag[i][j]
+                else:
+                    outputImg[i][j] = 0
+            # diagonal direction (22.5 ~ 67.5 and -112.5 ~ -157.5)
+            elif (g_direct[i][j] < -v_left and g_direct[i][j] >= -h_left) or \
+                (g_direct[i][j] <= v_right and g_direct[i][j] >= h_right):
+                if (img_mag[i + 1][j + 1] <= img_mag[i][j]) and \
+                    (img_mag[i - 1][j - 1] <= img_mag[i][j]):
+                    outputImg[i][j] = img_mag[i][j]
+                else:
+                    outputImg[i][j] = 0
+    # displays the image
+    saveImg(outputImg, "non_max_img")
     
 # Save the output images to database
-def saveImg():
-    print("")
+def saveImg(img, img_title):
+    cv.imwrite(img_title + '.png', img)
 
 def normalize(x):
     x = np.asarray(x)
     return (x - x.min()) / (np.ptp(x))
 
 def main():
-    gaussianImg = gaussian('images/woman_original.jpg', 3)
-
-    # #waits for user to press "Esc" to close the displayed image window
-    # cv.waitKey(0)
+    gaussianImg = gaussian('images/woman_original.jpg', 2)
+    sobelImg, gradient_direction = sobel(gaussianImg)
+    nonMax(sobelImg, gradient_direction)
 
 if __name__ == "__main__":
     main()
