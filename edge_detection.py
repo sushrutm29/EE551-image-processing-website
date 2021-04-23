@@ -5,14 +5,9 @@ import math
 #reads in the image
 def readImg(img_file_name):
     current_img = cv.imread(img_file_name)
-    # height, width, channels = img.shape
-    #dimensions = img.shape
-    #channels = img.shape[2]
     # converts the image to gray scale if it is color
     if current_img.shape[2] > 1:
         current_img = cv.cvtColor(current_img, cv.COLOR_BGR2GRAY)
-    # cv.imshow('read in image', current_img)
-    # cv.waitKey(0)
     return current_img
     
 # Gaussian Filter method
