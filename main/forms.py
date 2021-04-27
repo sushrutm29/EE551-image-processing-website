@@ -1,32 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from main.models import User
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import RadioField, SubmitField
+from wtforms.validators import DataRequired
 
-class RegistrationForm(FlaskForm):
-    username = StringField('Username',
-                           validators=[DataRequired(), Length(min=2, max=20)])
-    email = StringField('Email',
-                        validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm Password',
-                                     validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Sign Up')
-
-    def validate_username(self, username):
-        user = User.objects(username=username.data).first()
-        if user:
-            raise ValidationError('That username is taken. Please choose a different one.')
-
-    def validate_email(self, email):
-        user = User.objects(email=email.data).first()
-        if user:
-            raise ValidationError('That email is taken. Please choose a different one.')
-
-
-class LoginForm(FlaskForm):
-    email = StringField('Email',
-                        validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember = BooleanField('Remember Me')
-    submit = SubmitField('Login')
+class ImageProcessForm(FlaskForm):
+    def __init__(self):
+        self.image = FileField('Upload Image', validators=[DataRequired(), FileAllowed(['jpg', 'png'])])
+        self.process = RadioField('Select Process', validators=[DataRequired()] , choices=[('edge', 'Edge Detection'), ('line', 'Line Detection')], coerce=str)
+        self.submit = SubmitField('Perform Process')
