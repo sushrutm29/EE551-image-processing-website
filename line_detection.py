@@ -57,11 +57,9 @@ def hessian(img, threshold = 1200):
 
     # applies Hessian determinant formula
     determinant = np.subtract(np.multiply(derivative_xx, derivative_yy), np.multiply(derivative_xy, derivative_xy))
-    edge.saveImg(determinant, "determinant_img01")
     # applies the threshold onto the determinant of the Hessian
     determinant[determinant < threshold] = threshold
     determinant[determinant == round(threshold)] = 0
-    edge.saveImg(determinant, "determinant_img02")
 
     # applies the non-maximum suppression
     hessianImg = nonMaxSuppression(determinant)
@@ -183,8 +181,6 @@ def RANSAC(original_img, hessian_img, threshold = 10, minInlier = 60):
     sortedLines = sorted(outputLines.items(), key = lambda x : x[1]['inlierRatio'], reverse = True)
     # deletes extra lines stored in outputLines dictionary
     tempDict = {} # uses to store the 
-    print("outputLines length = " + str(len(outputLines)))
-    print("sortedLines list length = " + str(len(sortedLines)))
     for i in range(len(sortedLines)):
         tempDict[i] = {'inlierRatio' : sortedLines[i][1]['inlierRatio'], \
             'startP' : sortedLines[i][1]['startP'], \
@@ -192,12 +188,10 @@ def RANSAC(original_img, hessian_img, threshold = 10, minInlier = 60):
             'y_intercept' : sortedLines[i][1]['y_intercept'], 'inliers' : sortedLines[i][1]['inliers']}
     outputLines = tempDict
     # plots the RANSAC image
-    plotRANSAC(original_img, non_zero_points, outputLines, 0, len(cols), 0, len(rows))
+    plotRANSAC(original_img, non_zero_points, outputLines, 0, hessian_img.shape[1], 0, hessian_img.shape[0])
 
 def plotRANSAC(originalImg, non_zero_points, line_dict, x_min, x_max, y_min, y_max):
-    # print(non_zero_points)
-    print("non_zero_points type = " + str(type(non_zero_points)))
-    print("non_zero_points size = " + str(non_zero_points.shape))
+    # 548 * 407
     normal_point_size = 9
     start_end_size = 25
     normal_color = (0,0,0)
@@ -210,8 +204,9 @@ def plotRANSAC(originalImg, non_zero_points, line_dict, x_min, x_max, y_min, y_m
     plt.title("RANSAC")
     plt.axis([x_min, x_max, y_max, y_min])
     ax.imshow(original_img)
-    plt.scatter(non_zero_points[:, 1], non_zero_points[:, 0], marker = 'o', c = 'yellow', s = normal_point_size)
+    # plt.scatter(non_zero_points[:, 1], non_zero_points[:, 0], marker = 'o', c = 'yellow', s = normal_point_size)
     # draws each line and its corresponding points
+    print("line_dict length = " + str(len(line_dict)))
     for i in range(len(line_dict)):
         # {'inlierRatio', 'startP', 'endP', 
         # 'slope', 'y_intercept', 'inliers'}
@@ -222,13 +217,19 @@ def plotRANSAC(originalImg, non_zero_points, line_dict, x_min, x_max, y_min, y_m
         y_vals = b + m * x_vals
         current_color = (random.random(), random.random(), random.random())
         plt.plot(x_vals, y_vals, c = current_color)
-        # plt.plot(line_dict[i]['startP'], line_dict[i]['endP'], c = current_color)
-        print(line_dict[i]['inliers'][:, 1])
         # removes the (0, 0) points from all rows and columns
-
+        currentInliers = line_dict[i]['inliers']
+        currentInliers = np.delete(currentInliers,np.where(~currentInliers.any(axis=1))[0], axis=0)
+        # print(currentInliers)
         # plots all the inlier points belong to the current line
-        plt.scatter(line_dict[i]['inliers'][:, 1], line_dict[i]['inliers'][:, 0], marker = 'd', c = current_color, s = normal_point_size)
-
+        plt.scatter(currentInliers[:, 1], currentInliers[:, 0], marker = 'd', c = current_color, s = normal_point_size)
+        # makes the start and end points red
+        startP = line_dict[i]['startP']
+        endP = line_dict[i]['endP']
+        plt.scatter(startP[1], startP[0], marker = 'd', c = 'red', s = normal_point_size)
+        plt.scatter(endP[1], endP[0], marker = 'd', c = 'red', s = normal_point_size)
+    
+    plt.scatter(non_zero_points[:, 1], non_zero_points[:, 0], marker = 'o', c = 'yellow', s = normal_point_size)
     plt.show()
 
 def testPlot():
