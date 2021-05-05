@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% block content %}
 <div class="content-section">
     <form method="POST" action="" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
@@ -14,17 +15,17 @@
                 {% endif %}
             </div>
             <div class="form-group">
-                {{ form.process.label() }}
-                {% if form.process.errors %}
-                    {{ form.process(class="form-control form-control-lg is-invalid") }}
+                {{ form.algorithm.label() }}
+                {% if form.algorithm.errors %}
+                    {{ form.algorithm(class="form-control form-control-lg is-invalid") }}
                     <div class="invalid-feedback">
-                        {% for error in form.process.errors %}
+                        {% for error in form.algorithm.errors %}
                             <span>{{ error }}</span>
                         {% endfor %}
                     </div>
                 {% else %}
-                    {{ form.process(class="form-control form-control-lg") }}
-                {{ endif }}
+                    {{ form.algorithm(class="form-control form-control-lg ") }}
+                {% endif %}
             </div>
         </fieldset>
         <div class="form-group">
@@ -36,6 +37,4 @@
         <img class="img-responsive" src="{{processed_image}}" alt="Processed Image">
     </div>
 </div>
-
-{% block content %}
 {% endblock content %}
