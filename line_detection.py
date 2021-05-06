@@ -46,7 +46,7 @@ def hessian(img, threshold = 1200):
     # reads in the image
     current_img = edge.readImg(img)
     # applies Gaussian filter
-    sigma = 3
+    sigma = 2
     gaussian_img = edge.gaussian(img, sigma)
     # calculates Ixx, Ixy, Iyy matrix
     _, derivative_x = sobel(gaussian_img, 'derivative_x')
@@ -90,11 +90,12 @@ def nonMaxSuppression(img_mag):
                 outputImg[i][j] = 0
     return outputImg
 
-def RANSAC(original_img, hessian_img, threshold = 10, minInlier = 60):
+def RANSAC(original_img, hessian_img, threshold = 5, minInlier = 60):
     # initializes RANSAC parameters
     numOfRandomPoints = 2 # number of random points selected for each model
     totalNumOfLines = 4 # total number of output lines
     numOfNonZeroPoints = np.count_nonzero(hessian_img) # total number of non-zero value pixels
+    print("numOfNonZeroPoints = " + str(numOfNonZeroPoints))
     maxSampleNum = float('inf') # umber of samples N (number of iterations)
     iterationCount = 0 # number of iteration
     outputLineCount = 1
@@ -103,6 +104,7 @@ def RANSAC(original_img, hessian_img, threshold = 10, minInlier = 60):
     # finds the non-zero value pixels' coordinates
     rows, cols = np.nonzero(hessian_img)[0], np.nonzero(hessian_img)[1]
     non_zero_points = np.vstack([rows, cols]).astype(float).T
+    print("non_zero_points type = " + str(type(non_zero_points)))
     # initializes matrices used to store visited pixels
     selected_points = np.zeros([numOfNonZeroPoints, 2], dtype = float)
     selected_points_row = np.zeros([numOfNonZeroPoints, 1], dtype = int)
@@ -116,7 +118,7 @@ def RANSAC(original_img, hessian_img, threshold = 10, minInlier = 60):
         point_two = randomPoint(len(rows), non_zero_points)
         # skips the current point
         if point_two[1] == point_one[1]:
-            iterationCount += 1
+            # iterationCount += 1
             continue
         # calculates the slope and y_intercept of the model line
         slope = (point_two[0].item() - point_one[0].item()) \
@@ -126,8 +128,8 @@ def RANSAC(original_img, hessian_img, threshold = 10, minInlier = 60):
         i = 0
         # scans through all the non-zero value pixels to find inlier
         while i < len(rows):
-            if non_zero_points[i][1] == float('nan') and \
-                non_zero_points[i][0] == float('nan'):
+            if math.isnan(non_zero_points[i][1]) and \
+                math.isnan(non_zero_points[i][0]):
                 i += 1
                 continue
             # gets the current pixel's coordinates
@@ -160,7 +162,7 @@ def RANSAC(original_img, hessian_img, threshold = 10, minInlier = 60):
             # calculates proporation of outliers e
             outlierRatio = 1 - inlierRatio
             maxSampleNum = math.log(1 - levelOfConf) \
-                / math.log(1 - (1 - outlierRatio) ** numOfRandomPoints)
+                / math.log(1 - ((1 - outlierRatio) ** numOfRandomPoints))
             outputLines[outputLineCount] = {'inlierRatio' : inlierRatio, \
                 'startP' : point_one, 'endP' : point_two, 'slope' : slope, \
                 'y_intercept' : y_intercept, 'inliers' : selected_points}
@@ -175,13 +177,11 @@ def RANSAC(original_img, hessian_img, threshold = 10, minInlier = 60):
             # resets selected points matrix
             selected_points = np.zeros([numOfNonZeroPoints, 2], dtype = float)
             selected_points_row = np.zeros([numOfNonZeroPoints, 1], dtype = int)     
-    # sorts outputLines dictionary
-    # needs to manually sort the dictionary and remove the extra line
     # sorts the outputLines dictionary by inlier ratio
     sortedLines = sorted(outputLines.items(), key = lambda x : x[1]['inlierRatio'], reverse = True)
     # deletes extra lines stored in outputLines dictionary
     tempDict = {} # uses to store the 
-    for i in range(len(sortedLines)):
+    for i in range(min(len(sortedLines), totalNumOfLines)):
         tempDict[i] = {'inlierRatio' : sortedLines[i][1]['inlierRatio'], \
             'startP' : sortedLines[i][1]['startP'], \
             'endP' : sortedLines[i][1]['endP'], 'slope' : sortedLines[i][1]['slope'], \
@@ -204,51 +204,39 @@ def plotRANSAC(originalImg, non_zero_points, line_dict, x_min, x_max, y_min, y_m
     plt.title("RANSAC")
     plt.axis([x_min, x_max, y_max, y_min])
     ax.imshow(original_img)
-    # plt.scatter(non_zero_points[:, 1], non_zero_points[:, 0], marker = 'o', c = 'yellow', s = normal_point_size)
+    print("white point count = " + str(len(non_zero_points)))
+    plt.scatter(non_zero_points[:, 1], non_zero_points[:, 0], marker = 'o', c = 'white', s = normal_point_size)
+    
     # draws each line and its corresponding points
-    print("line_dict length = " + str(len(line_dict)))
+    default_colors = ["cyan", "green", "magenta", "red", "blue"]
     for i in range(len(line_dict)):
-        # {'inlierRatio', 'startP', 'endP', 
-        # 'slope', 'y_intercept', 'inliers'}
+        # line_dict contents: {'inlierRatio', 'startP', 'endP', 'slope', 'y_intercept', 'inliers'}
         # gets the x-axis limits
         m = line_dict[i]['slope']
         b = line_dict[i]['y_intercept']
         x_vals = np.array(axes.get_xlim())
         y_vals = b + m * x_vals
-        current_color = (random.random(), random.random(), random.random())
-        plt.plot(x_vals, y_vals, c = current_color)
+        current_color = default_colors[i]
+        print("i = " + str(i) + ", current_color = " + current_color)
         # removes the (0, 0) points from all rows and columns
         currentInliers = line_dict[i]['inliers']
+        print("line i = " + str(i) + ", inlier count = " + str(len(currentInliers)))
         currentInliers = np.delete(currentInliers,np.where(~currentInliers.any(axis=1))[0], axis=0)
-        # print(currentInliers)
         # plots all the inlier points belong to the current line
         plt.scatter(currentInliers[:, 1], currentInliers[:, 0], marker = 'd', c = current_color, s = normal_point_size)
         # makes the start and end points red
         startP = line_dict[i]['startP']
         endP = line_dict[i]['endP']
-        plt.scatter(startP[1], startP[0], marker = 'd', c = 'red', s = normal_point_size)
-        plt.scatter(endP[1], endP[0], marker = 'd', c = 'red', s = normal_point_size)
+        plt.scatter(startP[1], startP[0], marker = 'd', c = 'yellow', s = normal_point_size)
+        plt.scatter(endP[1], endP[0], marker = 'd', c = 'yellow', s = normal_point_size)
     
-    plt.scatter(non_zero_points[:, 1], non_zero_points[:, 0], marker = 'o', c = 'yellow', s = normal_point_size)
+        plt.plot(x_vals, y_vals, c = current_color)
+
     plt.show()
 
 def testPlot():
-    np.random.seed(19680801)
-    N = 100
-    r0 = 0.6
-    x = 0.9 * np.random.rand(N)
-    y = 0.9 * np.random.rand(N)
-    area = (20 * np.random.rand(N))**2  # 0 to 10 point radii
-    c = np.sqrt(area)
-    r = np.sqrt(x ** 2 + y ** 2)
-    area1 = np.ma.masked_where(r < r0, area)
-    area2 = np.ma.masked_where(r >= r0, area)
-    plt.scatter(x, y, s=area1, marker='^', c=c)
-    plt.scatter(x, y, s=area2, marker='o', c=c)
-    # Show the boundary between the regions:
-    theta = np.arange(0, np.pi / 2, 0.01)
-    plt.plot(r0 * np.cos(theta), r0 * np.sin(theta))
-
+    plt.scatter(0, 0, marker = 'd', c = 'red', s = 9)
+    plt.scatter(4, 4, marker = 'd', c = 'red', s = 9)
     plt.show()
 
 def randomPoint(max_value, input_matrix):
