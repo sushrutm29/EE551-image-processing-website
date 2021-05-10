@@ -1,34 +1,36 @@
 # Image Processing Website
 
-This website provides an easy-to-use interface for performing some common image processing operations on an image of the users' choice. As of now, the supported operations are gaussian filter, sobel filter, non-maximum supression, hessian detection and RANSAC. More operations are expected to be added soon!
+This website allows image processing operations to be performed on an image of the users' choice. The supported operations are gaussian filter, sobel filter, non-maximum supression, hessian detection and RANSAC. It provides an easy-to-use interface for the same. More operations are expected to be added soon!
 
 # Getting Started
-These instructions will enable you to run the application locally on your system.
+Please follow the below instructions to run the application locally on your system
 
 # Prerequisites
 
-* Visual Studio - https://docs.microsoft.com/en-us/visualstudio/install/install-visual-studio?view=vs-2019
-* Python 3.9 - https://www.python.org/download/releases/3.0/
-* Browser - Google Chrome preferred.
-* Make sure Javascript is enabled in the browser settings.
+* Visual Studio Code (Optional) - https://code.visualstudio.com/download
+* Python 3 - https://www.python.org/download/releases/3.0/
+* Browser - Google Chrome preferred
 
 # Install and Run the project
 
-1. After the project is set up and prerequisites downloaded, run the following command in Visual Studio terminal to install the required dependencies:
+1. Clone the repository and navigate to the project directory in a terminal window
+
+2. Run the following command in a terminal window to install the required Python dependencies:
 
     ``` python3 -m pip install -r requirements.txt ```
 
-2. Start the Flask server to run the application on local host using the following command:
+3. Start the Flask server to run the application on local host using the following command:
 
     ``` python3 run.py ```
     
-3. Hit the following URL in the browser:
+4. Access our website by pasting the following URL in a browser window (Ensure JavaScript is enabled):
 
     ```http://localhost:5000```
 
-# Built using
-* Python 3 - Programming Language
+# Core Python Modules
 * Flask - Micro web framework
+* Numpy - Library for multi-dimensional arrays' operations
+* Matplotlib - Library for plotting operations
 
 # Authors
 * Sushrut Madhavi
