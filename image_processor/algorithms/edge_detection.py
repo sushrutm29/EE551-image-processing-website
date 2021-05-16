@@ -52,8 +52,11 @@ def gaussian(img, sigma):
 
 # Sobel Filter method
 def sobel(gaussian_img):
-    # applies gaussian filter
-    gaussian_img = gaussian(gaussian_img, 2)
+    gaussian_path = os.path.join(app.root_path, 'static/images/gaussian_img.png')
+    if not os.path.isfile(gaussian_path):
+        gaussian_img = gaussian(gaussian_img, 2)
+    else:
+        gaussian_img = cv.imread(gaussian_path)
 
     # initializes the gradient X and Y matrices
     gradient_x = [[1, 2, 1], [0, 0, 0], [-1, -2, -1]]
@@ -146,11 +149,6 @@ def saveImg(img, img_title):
 def normalize(x):
     x = np.asarray(x)
     return (x - x.min()) / (np.ptp(x))
-
-def main():
-    gaussianImg = gaussian('images/woman_original.jpg', 2)
-    sobelImg, gradient_direction = sobel(gaussianImg)
-    nonMax(sobelImg, gradient_direction)
 
 if __name__ == "__main__":
     main()
