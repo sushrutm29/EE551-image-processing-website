@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, send_from_directory, send_file
 from image_processor.forms import ImageProcessForm
 from image_processor import app
-from image_processor.algorithms.edge_detection import gaussian, sobel, nonMax
+from image_processor.algorithms.edge_detection import gaussian, sobel_edge, nonMax
 from image_processor.algorithms.line_detection import hessian, RANSAC
 import os
 
@@ -19,7 +19,7 @@ def process_picture(form_picture, form_process):
         processed_path = os.path.join(app.root_path, 'static/images/sobel_img.png')
         filename = "sobel_img.png"
         if not os.path.isfile(processed_path):
-            sobel(form_picture)
+            sobel_edge(form_picture)
         processed_path = url_for('static', filename='images/' + 'sobel_img.png')
     if form_process == "nonMax":
         processed_path = os.path.join(app.root_path, 'static/images/non_max_img.png')
@@ -61,6 +61,10 @@ def home():
         picture_path = os.path.join(app.root_path, 'static/images/upload.png')
         if form.image.data is not None:
             form.image.data.save(picture_path)
+            for image_file in os.listdir(images_folder):
+                if image_file != "default_original.jpeg" and image_file != "upload.png":
+                    os.remove(os.path.join(images_folder, image_file))
+
         processed_path, filename = process_picture(picture_path, form.algorithm.data)
         picture_path = url_for('static', filename='images/upload.png')
         
@@ -72,3 +76,10 @@ def home():
 def download(filename):
     file_path = os.path.join(app.root_path, 'static/images', filename)
     return send_file(file_path, as_attachment=True)
+
+@app.after_request
+def after_request(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, public, max-age=0"
+    response.headers["Expires"] = 0
+    response.headers["Pragma"] = "no-cache"
+    return response

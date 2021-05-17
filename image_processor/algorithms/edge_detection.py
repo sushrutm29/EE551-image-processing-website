@@ -51,7 +51,7 @@ def gaussian(img, sigma):
     return gaussianImg
 
 # Sobel Filter method
-def sobel(gaussian_img):
+def sobel_edge(gaussian_img):
     gaussian_path = os.path.join(app.root_path, 'static/images/gaussian_img.png')
     if not os.path.isfile(gaussian_path):
         gaussian_img = gaussian(gaussian_img, 2)
@@ -90,9 +90,9 @@ def sobel(gaussian_img):
     return sobelImg, gradient_direction
 
 # Non-maximum Suppression method
-def nonMax(img_mag):
+def nonMax(input_img):
     # applies sobel filter
-    img_mag, g_direct = sobel(img_mag)
+    img_mag, g_direct = sobel_edge(input_img)
 
     # initializes necessary variables
     rows = img_mag.shape[0]
