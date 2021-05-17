@@ -2,6 +2,13 @@
 
 This website allows image processing operations to be performed on an image of the users' choice. The supported operations are gaussian filter, sobel filter, non-maximum supression, hessian detection and RANSAC. It provides an easy-to-use interface for the same. More operations are expected to be added soon!
 
+# Core Image Processing Filters
+* [Gaussian Filter](http://www.justin-liang.com/tutorials/canny/#gaussian): smooths the uploaded image and removes any noise.
+* [Sobel Filter](http://www.justin-liang.com/tutorials/canny/#gradient): processes and displays the gradient magnitude of the uploaded image.
+* [Non-Max suppression](http://www.justin-liang.com/tutorials/canny/#suppression)
+* [Hessian Filter](https://en.wikipedia.org/wiki/Hessian_matrix): calculates and thresholds each pixel’s determinant then displays the remaining non-zero pixels as the points of interest.
+* [RANSAC Filter](https://en.wikipedia.org/wiki/Random_sample_consensus): randomly forms/finds four lines with the most inlier points from the hessian processed image.
+
 # Getting Started
 Please follow the below instructions to run the application locally on your system
 
