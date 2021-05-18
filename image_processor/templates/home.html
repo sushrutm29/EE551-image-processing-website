@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+    <form method="POST" action="" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Image Processor</legend>
+            <div class="form-group">
+                {{ form.image.label() }}
+                {{ form.image(class="form-control-file") }}
+                {% if form.image.errors %}
+                    {% for error in form.image.errors %}
+                        <span class="text-danger">{{ error }}</span></br>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.algorithm.label() }}
+                {% if form.algorithm.errors %}
+                    {{ form.algorithm(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.algorithm.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.algorithm(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+        </fieldset>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-outline-info") }}
+        </div>
+    </form>
+    <div class="container">
+        <img class="img-responsive" src="{{original_image}}" alt="Original Image">
+        <br>
+        <br>
+        <img class="img-responsive" src="{{processed_image}}" alt="Processed Image">
+        {% if download %}
+            <br>
+            <br>
+            <a href="{{ url_for('download', filename=filename) }}"><button class="btn btn-primary">Download</button></a>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}
