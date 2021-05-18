@@ -24,7 +24,7 @@
                         {% endfor %}
                     </div>
                 {% else %}
-                    {{ form.algorithm(class="form-control form-control-lg remove-bullet") }}
+                    {{ form.algorithm(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
         </fieldset>
@@ -35,8 +35,13 @@
     <div class="container">
         <img class="img-responsive" src="{{original_image}}" alt="Original Image">
         <br>
-        <br/>
+        <br>
         <img class="img-responsive" src="{{processed_image}}" alt="Processed Image">
+        {% if download %}
+            <br>
+            <br>
+            <a href="{{ url_for('download', filename=filename) }}"><button class="btn btn-primary">Download</button></a>
+        {% endif %}
     </div>
 </div>
 {% endblock content %}
