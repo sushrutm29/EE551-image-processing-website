@@ -52,11 +52,7 @@ No need to re-upload it!
 
 # Example outputs
 1. Original Image ![original_img](https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/original_img.png)
-<br/>
 2. Gaussian Output ![gaussian_img](https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/gaussian_img.png)
-<br/>
 3. Sobel Output ![sobel_img](https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/sobel_img.png)
-<br/>
 4. Hessian Output ![hessian_img](https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/hessian_img.png)
-<br/>
 5. RANSAC Output ![ransac_img](https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/ransac_img.png)
