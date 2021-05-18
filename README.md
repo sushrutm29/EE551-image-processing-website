@@ -17,9 +17,9 @@ Please follow the below instructions to run the application locally on your syst
 * Browser - Google Chrome preferred
 
 # Core Python Modules
-* Flask - Micro web framework
-* Numpy - Library for multi-dimensional arrays' operations
-* Matplotlib - Library for plotting operations
+* [Flask](https://pypi.org/project/Flask/) - Micro web framework
+* [Numpy](https://numpy.org/) - Library for multi-dimensional arrays' operations
+* [Matplotlib](https://matplotlib.org/) - Library for plotting operations
 
 # Install and Run the project
 
