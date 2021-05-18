@@ -34,6 +34,12 @@ Please follow the below instructions to run the application locally on your syst
 
     ```http://localhost:5000```
 
+5. Upload an image and select the filter to be applied
+
+6. Press the submit button
+
+7. Wait for the image to be processed and then download the output if needed
+
 # Core Python Modules
 * Flask - Micro web framework
 * Numpy - Library for multi-dimensional arrays' operations
