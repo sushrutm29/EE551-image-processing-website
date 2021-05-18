@@ -1,10 +1,20 @@
+# Course: EE551 Python for Engineer
+# Author: Lun-Wei Chang
+# Date: 2021/05/09
+# Version: 1.0
+# Performs Gaussian filter, Sobel filter and non-max suppression.
 import cv2 as cv
 import numpy as np
 import math
 import os
 from image_processor import app
 
-#reads in the image
+# reads in an image with the provided file path.
+# converts the image from color to gray scale if needed.
+# Inputs:
+#   img_file_name: file name of the image to be read in.
+# Outputs:
+#   current_img: uploaded image in gray scale.
 def readImg(img_file_name):
     current_img = cv.imread(img_file_name)
     # converts the image to gray scale if it is color
@@ -12,7 +22,15 @@ def readImg(img_file_name):
         current_img = cv.cvtColor(current_img, cv.COLOR_BGR2GRAY)
     return current_img
     
-# Gaussian Filter method
+# Applies the Gaussian filter onto the specified image with
+# the given sigma value. Saves the processed image
+# into a local file directory.
+# Inputs:
+#   img: the name of the image file to be processed (including
+#   path).
+#   sigma: value used to calculate the Gaussain kernel size.
+# Outputs:
+#   gaussianImg: image that has been filtered by Gaussian filter.
 def gaussian(img, sigma):
     current_img = readImg(img)
     rows = current_img.shape[0]
@@ -45,23 +63,27 @@ def gaussian(img, sigma):
             temp_matrix = temp_matrix.astype(float)
             temp_matrix = kernel * temp_matrix
             gaussianImg[i, j] = np.sum(temp_matrix)
-    # gaussianImg = normalize(gaussianImg)
     #displays the image
     saveImg(gaussianImg, "gaussian_img")
     return gaussianImg
 
-# Sobel Filter method
-def sobel_edge(gaussian_img):
-    gaussian_path = os.path.join(app.root_path, 'static/images/gaussian_img.png')
-    if not os.path.isfile(gaussian_path):
-        gaussian_img = gaussian(gaussian_img, 2)
-    else:
-        gaussian_img = cv.imread(gaussian_path)
+# Takes in an image that has been filtered by Gausssian filter and 
+# applies the sobel filter to calculate the gradient magnitude of 
+# each pixel; the default threshold used is 10. Saves the filtered
+# image into the current program directory.
+# Inputs
+#	input_img: the image to be applied with Sobel filter.
+#   threshold: max value of pixel gradient magnitude.
+# Outputs:
+#   sobelImg: a matrix consists of gradient magnitude of each pixel.
+#   gradient_direction: a matrix consists of the gradient direction of each pixel.
+def sobel_edge(input_img, threshold = 10):
+    # applies gaussian filter
+    gaussian_img = gaussian(input_img, 2)
 
     # initializes the gradient X and Y matrices
     gradient_x = [[1, 2, 1], [0, 0, 0], [-1, -2, -1]]
     gradient_y = [[1, 0, -1], [2, 0, -2], [1, 0, -1]]
-    threshold = 10 #max value of pixel gradient magnitude
     img_rows = gaussian_img.shape[0]
     img_cols = gaussian_img.shape[1]
     gradient_magnitude = np.zeros([img_rows, img_cols], dtype = float)
@@ -81,7 +103,6 @@ def sobel_edge(gaussian_img):
             gradient_direction[i + 1][j + 1] = math.degrees(math.atan(Gy / Gx)) 
 
     # applies the threshold to the gradient magnitude matrix
-    # sobelImg = max(gradient_magnitude, threshold)
     gradient_magnitude[gradient_magnitude < threshold] = threshold
     sobelImg = gradient_magnitude
     sobelImg[sobelImg == round(threshold)] = 0
@@ -89,7 +110,12 @@ def sobel_edge(gaussian_img):
     saveImg(sobelImg, "sobel_img")
     return sobelImg, gradient_direction
 
-# Non-maximum Suppression method
+# Applies non-maximum suppression to the image that has been filtered with
+# the Sobel filter. Saves the processed image into the current program directory.
+# Inputs:
+#   input_img: image matrix with gradietn magnitude for each pixel.
+# Outputs:
+#   outputImg: the image that has been applied with non-maximum suppression.
 def nonMax(input_img):
     # applies sobel filter
     img_mag, g_direct = sobel_edge(input_img)
@@ -141,14 +167,10 @@ def nonMax(input_img):
     # displays the image
     saveImg(outputImg, "non_max_img")
     
-# Save the output images to database
+# Saves the pass-in image to the current directory.
+# Inputs:
+#   img: the image to be saved.
+#   img_title: the file name of the image.
 def saveImg(img, img_title):
     image_path = os.path.join(app.root_path, 'static/images', img_title + '.png')
     cv.imwrite(image_path, img)
-
-def normalize(x):
-    x = np.asarray(x)
-    return (x - x.min()) / (np.ptp(x))
-
-if __name__ == "__main__":
-    main()

@@ -295,13 +295,3 @@ def randomPoint(max_val, input_matrix):
     temp_y = input_matrix[rand_row, 1]
     # returns a random point
     return [temp_x, temp_y, rand_row]
-
-# # main method where the Hessian and RANSAC are called.
-# def main():
-#     uploadImg = "road.png"
-#     hessian_img = hessian(uploadImg)
-#     # RANSAC(uploadImg, hessian_img, 10, True, 0.065)
-#     RANSAC(uploadImg, hessian_img)
-
-if __name__ == "__main__":
-    main()
