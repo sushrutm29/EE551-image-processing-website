@@ -53,16 +53,16 @@ No need to re-upload it!
 # Example outputs
 1. Original Image 
 
-<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/original_img.png" width="250" height="250">
+<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/original_img.png" width="256" height="256">
 2. Gaussian Output 
 
-<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/gaussian_img.png" width="250" height="250">
+<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/gaussian_img.png" width="256" height="256">
 3. Sobel Output 
 
-<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/sobel_img.png" width="250" height="250">
+<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/sobel_img.png" width="256" height="256">
 4. Hessian Output 
 
-<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/hessian_img.png" width="250" height="250"> 
+<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/hessian_img.png" width="256" height="256"> 
 5. RANSAC Output 
 
-<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/ransac_img.png" width="250" height="250"> 
+<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/ransac_img.png" width="320" height="240"> 
