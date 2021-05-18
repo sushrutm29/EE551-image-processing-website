@@ -1,3 +1,8 @@
+# Course: EE551 Python for Engineer
+# Author: Sushrut Madhavi
+# Date: 2021/05/04
+# Version: 1.0
+# Defines routes for the front-end
 from flask import render_template, url_for, flash, redirect, request, send_from_directory, send_file
 from image_processor.forms import ImageProcessForm
 from image_processor import app
@@ -5,6 +10,14 @@ from image_processor.algorithms.edge_detection import gaussian, sobel_edge, nonM
 from image_processor.algorithms.line_detection import hessian, RANSAC
 import os
 
+# Performs the specified operation on an image
+# Checks if required output already exists in cache
+# Inputs:
+#   form_picture: file path of the image to be processed
+#   form_process: the operation to be performed on the image
+# Outputs:
+#   processed_path: file path of the resulting image
+#   filename: file name of the resulting image
 def process_picture(form_picture, form_process):
     processed_path = ""
     filename = ""
@@ -43,6 +56,12 @@ def process_picture(form_picture, form_process):
 
     return processed_path, filename
 
+# Route for home page which has the main functionality of the website
+# Contains a form for image upload and space for displaying result
+# Also displays an optional download button after processing
+# Methods:
+#   GET: Called when user navigates to this route. Image displays are blank in this case.
+#   POST: Called when user submits the form. Image display areas show original image and the result with selected filter applied
 @app.route("/", methods=['GET', 'POST'])
 def home():
     download = False
@@ -72,11 +91,19 @@ def home():
 
     return render_template('home.html', title='Image Processor', original_image=picture_path, processed_image=processed_path, form=form, download=download)
 
+# Downloads an image from storage to user's device 
+# Inputs:
+#   filename: file path of the image to be downloaded
 @app.route('/download/<filename>')
 def download(filename):
     file_path = os.path.join(app.root_path, 'static/images', filename)
     return send_file(file_path, as_attachment=True)
 
+# Prevents image from being fetched by the browser from its cache
+# This is necessary to avoid the issue of wrong image being displayed in result area if the page is not refreshed
+# It is accomplished by modifying some header values in the response object
+# Inputs:
+#   response: the response object from the server
 @app.after_request
 def after_request(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, public, max-age=0"
