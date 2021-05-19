@@ -1,3 +1,8 @@
+# Course: EE551 Python for Engineer
+# Author: Sushrut Madhavi
+# Date: 2021/04/25
+# Version: 1.0
+# Creates the flask app
 from flask import Flask
 
 app = Flask(__name__)

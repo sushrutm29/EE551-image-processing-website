@@ -1,5 +1,4 @@
-# Image Processing Website
-
+# Overview
 This website allows image processing operations to be performed on an image of the users' choice. The supported operations are gaussian filter, sobel filter, non-maximum supression, hessian detection and RANSAC. It provides an easy-to-use interface for the same. More operations are expected to be added soon!
 
 # Supported Image Processing Filters
@@ -13,10 +12,14 @@ This website allows image processing operations to be performed on an image of t
 Please follow the below instructions to run the application locally on your system
 
 # Prerequisites
-
 * Visual Studio Code (Optional) - https://code.visualstudio.com/download
 * Python 3 - https://www.python.org/download/releases/3.0/
 * Browser - Google Chrome preferred
+
+# Core Python Modules
+* [Flask](https://pypi.org/project/Flask/) - Micro web framework
+* [Numpy](https://numpy.org/) - Library for multi-dimensional arrays' operations
+* [Matplotlib](https://matplotlib.org/) - Library for plotting operations
 
 # Install and Run the project
 
@@ -43,10 +46,22 @@ Please follow the below instructions to run the application locally on your syst
 If you wish to apply another filter to the same image, just select the filter and press submit again.
 No need to re-upload it!
 
-# Core Python Modules
-* Flask - Micro web framework
-* Numpy - Library for multi-dimensional arrays' operations
-* Matplotlib - Library for plotting operations
+# Example outputs
+1. Original Image 
+
+<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/original_img.png" width="256" height="256">
+2. Gaussian Output 
+
+<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/gaussian_img.png" width="256" height="256">
+3. Sobel Output 
+
+<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/sobel_img.png" width="256" height="256">
+4. Hessian Output 
+
+<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/hessian_img.png" width="256" height="256"> 
+5. RANSAC Output 
+
+<img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/ransac_img.png" width="320" height="240"> 
 
 # Authors
 * Sushrut Madhavi
