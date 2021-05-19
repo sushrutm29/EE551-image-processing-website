@@ -46,10 +46,6 @@ Please follow the below instructions to run the application locally on your syst
 If you wish to apply another filter to the same image, just select the filter and press submit again.
 No need to re-upload it!
 
-# Authors
-* Sushrut Madhavi
-* Lun-Wei Chang (David)
-
 # Example outputs
 1. Original Image 
 
@@ -66,3 +62,7 @@ No need to re-upload it!
 5. RANSAC Output 
 
 <img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/ransac_img.png" width="320" height="240"> 
+
+# Authors
+* Sushrut Madhavi
+* Lun-Wei Chang (David)
