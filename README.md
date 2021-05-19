@@ -49,7 +49,7 @@ No need to re-upload it!
 # Demo Video
 https://youtu.be/VqxDHWAoMSw
 
-# Example outputs
+# Sample outputs
 1. Original Image 
 
 <img src="https://github.com/sushrutm29/EE551-image-processing-website/blob/develop/sample_outputs/original_img.png" width="256" height="256">
