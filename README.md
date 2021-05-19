@@ -46,6 +46,9 @@ Please follow the below instructions to run the application locally on your syst
 If you wish to apply another filter to the same image, just select the filter and press submit again.
 No need to re-upload it!
 
+# Demo Video
+[Link](https://youtu.be/VqxDHWAoMSw)
+
 # Example outputs
 1. Original Image 
 
