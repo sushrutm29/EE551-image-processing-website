@@ -37,7 +37,7 @@ Please follow the below instructions to run the application locally on your syst
 
     ```http://localhost:5000```
 
-5. Upload an image and select the filter to be applied
+5. Upload an image and select the filter to be applied (Some filters might take a while to run, especially if the image's dimensions are larger than 600 * 600. Please be patient.)
 
 6. Press the submit button
 
